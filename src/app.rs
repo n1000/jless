@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
 
+use rustyline::config::{Builder, InputSource};
 use rustyline::Editor;
 use termion::event::Key;
 use termion::event::MouseButton::{Left, WheelDown, WheelUp};
@@ -52,8 +53,11 @@ impl App {
         let mut viewer = JsonViewer::new(flatjson, opt.mode);
         viewer.scrolloff_setting = opt.scrolloff;
 
+        let config = Builder::new().input_source(InputSource::Terminal).build();
+        let editor = Editor::<()>::with_config(config);
+
         let screen_writer =
-            ScreenWriter::init(stdout, Editor::<()>::new(), TTYDimensions::default());
+            ScreenWriter::init(stdout, editor, TTYDimensions::default());
 
         Ok(App {
             viewer,
